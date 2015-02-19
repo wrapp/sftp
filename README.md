@@ -6,8 +6,7 @@ Easy to use SFTP ([SSH File Transfer Protocol](https://en.wikipedia.org/wiki/SSH
 Usage
 -----
 
-- Define users as last arguments to `docker run`, one user per argument  
-  (syntax: `user:pass[:e][:[uid][:gid]]`).
+- Define users arguments in `SFTP_USER`, `SFTP_PASSWORD` and `SFTP_UID` environment variables to `docker run`
   - You must set custom UID for your users if you want them to make changes to
     your mounted volumes with permissions matching your host filesystem.
 - Mount volumes in user's home folder.
@@ -22,43 +21,7 @@ Examples
 
 ```
 docker run \
+    -e SFTP_USER=foo -e SFTP_PASSWORD=bar -e SFTP_UID=1001 \
     -v /host/share:/home/foo/share \
-    -p 2222:22 -d atmoz/sftp \
-    foo:123:1001
-```
-
-### Multiple users and volumes
-
-```
-docker run \
-    -v /host/share:/home/foo/share \
-    -v /host/documents:/home/foo/documents \
-    -v /host/http:/home/bar/http \
-    -p 2222:22 -d atmoz/sftp \
-    foo:123:1001 \
-    bar:abc:1002
-```
-
-### Encrypted password
-
-Add `:e` behind password to mark it as encrypted. Use single quotes.
-
-```
-docker run \
-    -v /host/share:/home/foo/share \
-    -p 2222:22 -d atmoz/sftp \
-    'foo:$1$0G2g0GSt$ewU0t6GXG15.0hWoOX8X9.:e:1001'
-```
-
-Tip: you can use makepasswd to generate encrypted passwords:  
-`echo -n 123 | makepasswd --crypt-md5 --clearfrom -`
-
-### Using SSH key (without password)
-
-```
-docker run \
-    -v /host/id_rsa.pub:/home/foo/.ssh/authorized_keys:ro \
-    -v /host/share:/home/foo/share \
-    -p 2222:22 -d atmoz/sftp \
-    foo::1001
+    -p 2222:22 -d atmoz/sftp
 ```
