@@ -2,11 +2,15 @@
 # Adds user and starts sshd
 # Requires atleast SFTP_USER and SFTP_PASSWORD as environment variables set
 
+set -e
+
+echo "Getting user credentials"
 user=$SFTP_USER
 password=$SFTP_PASSWORD
 uid=$SFTP_UID
 gid=$SFTP_GID
 
+echo "user: $user, uid: $uid, gid: $gid"
 useraddParams="-m -N"
 if [ -n "$uid" ]; then
     useraddParams="$useraddParams -o -u $uid"
@@ -17,10 +21,17 @@ if [ -n "$gid" ]; then
     groupadd -g $gid $gid
 fi
 
+echo "Creating user $user"
 useradd $useraddParams "$user"
+
+echo "chown user home directory"
 chown root:root /home/$user
+
+echo "Setting permissions on user home directory"
 chmod 755 /home/$user
 
+echo "Setting password for $user"
 echo "$user:$password" | chpasswd
 
+echo "Starting sshd"
 exec /usr/sbin/sshd -D
