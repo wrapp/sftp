@@ -4,22 +4,20 @@
 
 user=$SFTP_USER
 password=$SFTP_PASSWORD
-uid=$SFTP_UID
-gid=$SFTP_GID
+uid=1001
+gid=100
 
-useraddParams="-m -N"
-if [ -n "$uid" ]; then
-    useraddParams="$useraddParams -o -u $uid"
-fi
-
-if [ -n "$gid" ]; then
-    useraddParams="$useraddParams -g $gid"
-    groupadd -g $gid $gid
-fi
+useraddParams="-m -N -o -u $uid -g $gid"
+groupadd -g $gid $gid
 
 useradd $useraddParams "$user"
 chown root:root /home/$user
 chmod 755 /home/$user
+
+indir=/home/$user/IN
+mkdir $indir
+chmod 755 $indir
+chown $user:users $indir
 
 echo "$user:$password" | chpasswd
 
