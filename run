@@ -21,6 +21,11 @@ useradd $useraddParams "$user"
 chown root:root /home/$user
 chmod 755 /home/$user
 
+indir=/home/$user/IN
+mkdir $indir
+chmod 755 $indir
+chown $user:users $indir
+
 echo "$user:$password" | chpasswd
 
 exec /usr/sbin/sshd -D
