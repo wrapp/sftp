@@ -19,6 +19,11 @@ mkdir $indir
 chmod 755 $indir
 chown $user:users $indir
 
+outdir=/home/$user/OUT
+mkdir $outdir
+chmod 755 $outdir
+chown $user:users $outdir
+
 echo "$user:$password" | chpasswd
 
 exec /usr/sbin/sshd -D
